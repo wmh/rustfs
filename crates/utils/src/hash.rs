@@ -150,9 +150,9 @@ pub fn sip_hash(key: &str, cardinality: usize, id: &[u8; 16]) -> usize {
 /// A usize representing the bucket index
 ///
 pub fn crc_hash(key: &str, cardinality: usize) -> usize {
-    let mut hasher = crc_fast::Digest::new(crc_fast::CrcAlgorithm::Crc32IsoHdlc);
+    let mut hasher = crc32fast::Hasher::new();
     hasher.update(key.as_bytes());
-    let checksum = hasher.finalize() as u32;
+    let checksum = hasher.finalize();
 
     checksum as usize % cardinality
 }

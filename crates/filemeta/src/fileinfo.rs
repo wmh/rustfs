@@ -221,9 +221,9 @@ impl FileInfo {
             let cardinality = data_blocks + parity_blocks;
             let mut nums = vec![0; cardinality];
             let key_crc = {
-                let mut hasher = crc_fast::Digest::new(crc_fast::CrcAlgorithm::Crc32IsoHdlc);
+                let mut hasher = crc32fast::Hasher::new();
                 hasher.update(object.as_bytes());
-                hasher.finalize() as u32
+                hasher.finalize()
             };
 
             let start = key_crc as usize % cardinality;

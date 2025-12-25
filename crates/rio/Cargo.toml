@@ -33,7 +33,9 @@ tokio = { workspace = true, features = ["full"] }
 rand = { workspace = true }
 http.workspace = true
 aes-gcm = { workspace = true }
-crc-fast = { workspace = true }
+crc32c = { workspace = true }
+crc32fast = { workspace = true }
+crc64fast-nvme = { workspace = true }
 pin-project-lite.workspace = true
 serde = { workspace = true }
 bytes.workspace = true

@@ -103,9 +103,9 @@ where
                     let plaintext = &temp_buf.filled()[..n];
                     let plaintext_len = plaintext.len();
                     let crc = {
-                        let mut hasher = crc_fast::Digest::new(crc_fast::CrcAlgorithm::Crc32IsoHdlc);
+                        let mut hasher = crc32fast::Hasher::new();
                         hasher.update(plaintext);
-                        hasher.finalize() as u32
+                        hasher.finalize()
                     };
                     let ciphertext = cipher
                         .encrypt(&nonce, plaintext)
@@ -414,9 +414,9 @@ where
             }
 
             let actual_crc = {
-                let mut hasher = crc_fast::Digest::new(crc_fast::CrcAlgorithm::Crc32IsoHdlc);
+                let mut hasher = crc32fast::Hasher::new();
                 hasher.update(&plaintext);
-                hasher.finalize() as u32
+                hasher.finalize()
             };
             if actual_crc != crc {
                 this.ciphertext_buf.take();

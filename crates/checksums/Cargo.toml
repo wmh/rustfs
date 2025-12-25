@@ -27,7 +27,9 @@ documentation = "https://docs.rs/rustfs-signer/latest/rustfs_checksum/"
 
 [dependencies]
 bytes = { workspace = true }
-crc-fast = { workspace = true }
+crc32c = { workspace = true }
+crc32fast = { workspace = true }
+crc64fast-nvme = { workspace = true }
 http = { workspace = true }
 base64-simd = { workspace = true }
 md-5 = { workspace = true }

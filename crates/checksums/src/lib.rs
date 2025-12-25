@@ -107,13 +107,13 @@ pub trait Checksum: Send + Sync {
 
 #[derive(Debug)]
 struct Crc32 {
-    hasher: crc_fast::Digest,
+    hasher: crc32fast::Hasher,
 }
 
 impl Default for Crc32 {
     fn default() -> Self {
         Self {
-            hasher: crc_fast::Digest::new(crc_fast::CrcAlgorithm::Crc32IsoHdlc),
+            hasher: crc32fast::Hasher::new(),
         }
     }
 }
@@ -124,7 +124,7 @@ impl Crc32 {
     }
 
     fn finalize(self) -> Bytes {
-        let checksum = self.hasher.finalize() as u32;
+        let checksum = self.hasher.finalize();
 
         Bytes::copy_from_slice(checksum.to_be_bytes().as_slice())
     }
@@ -146,26 +146,27 @@ impl Checksum for Crc32 {
     }
 }
 
-#[derive(Debug)]
 struct Crc32c {
-    hasher: crc_fast::Digest,
+    hasher: crc32c::Crc32cHasher,
 }
 
 impl Default for Crc32c {
     fn default() -> Self {
         Self {
-            hasher: crc_fast::Digest::new(crc_fast::CrcAlgorithm::Crc32Iscsi),
+            hasher: crc32c::Crc32cHasher::default(),
         }
     }
 }
 
 impl Crc32c {
     fn update(&mut self, bytes: &[u8]) {
-        self.hasher.update(bytes);
+        use std::hash::Hasher;
+        self.hasher.write(bytes);
     }
 
     fn finalize(self) -> Bytes {
-        let checksum = self.hasher.finalize() as u32;
+        use std::hash::Hasher;
+        let checksum = self.hasher.finish() as u32;
 
         Bytes::copy_from_slice(checksum.to_be_bytes().as_slice())
     }
@@ -187,26 +188,25 @@ impl Checksum for Crc32c {
     }
 }
 
-#[derive(Debug)]
 struct Crc64Nvme {
-    hasher: crc_fast::Digest,
+    digest: crc64fast_nvme::Digest,
 }
 
 impl Default for Crc64Nvme {
     fn default() -> Self {
         Self {
-            hasher: crc_fast::Digest::new(crc_fast::CrcAlgorithm::Crc64Nvme),
+            digest: crc64fast_nvme::Digest::new(),
         }
     }
 }
 
 impl Crc64Nvme {
     fn update(&mut self, bytes: &[u8]) {
-        self.hasher.update(bytes);
+        self.digest.write(bytes);
     }
 
     fn finalize(self) -> Bytes {
-        Bytes::copy_from_slice(self.hasher.finalize().to_be_bytes().as_slice())
+        Bytes::copy_from_slice(self.digest.sum64().to_be_bytes().as_slice())
     }
 
     fn size() -> u64 {
